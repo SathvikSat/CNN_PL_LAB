@@ -16,10 +16,10 @@ void testReLU(const char * infile);
 
 int main(int argc , char * argv[])
 {
-	//testConv("data/conv_test.dat");
-//	testLinear("data/linear_test.dat");
+	testConv("data/conv_test.dat");
+	testLinear("data/linear_test.dat");
 	testPool("data/pool_test.dat");
-//	testSoftmax("data/softmax_test.dat");
+	testSoftmax("data/softmax_test.dat");
 	testReLU("data/relu_test.dat");
 
 	return 0;

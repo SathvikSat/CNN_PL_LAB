@@ -22,6 +22,8 @@ createConvTest([64,124,124],64,3,f)
 createConvTest([64,124,124],64,5,f)
 createConvTest([64,124,124],64,7,f)
 createConvTest([32,228,228],32,11,f)
+
+#createConvTest([1, , ], 2, )
 f.close()
 
 '''

@@ -12,6 +12,7 @@ using namespace std;
  */
 void conv2d( Tensor *X, Tensor *W, Tensor *b, Tensor *Z )
 {
+    #if 1
     int Zc = 0, Zm = 0, Zn = 0;
 
     Zc = W->size[0]; // ASK: Is number of output channels same here as number of channels in wt and img
@@ -20,7 +21,16 @@ void conv2d( Tensor *X, Tensor *W, Tensor *b, Tensor *Z )
     int N = Z->size[0]; // number of filters
     int j = 0, k = 0;
 
+
     Tensor *currFilter = NULL; // TODO: check multiple filters handling
+
+    for (size_t i = 0; i < (Z->size[0]*Z->size[1]*Z->size[2]); i++)
+    {
+        (*Z)[0][0][i] = 0;
+    }
+    
+
+
     for (size_t filters = 0; filters < N; filters++)
     {
         currFilter = &W[filters]; // ith weight tensor for ith output channel
@@ -56,6 +66,70 @@ void conv2d( Tensor *X, Tensor *W, Tensor *b, Tensor *Z )
             }
         }
     }
+    #endif 
+
+#if 0
+     int size_input = X->size[1];
+    int input_channels = X->size[0];
+    int padding = 0;
+    int stride = 1;
+    int size_kernel = W->size[1];
+    int kernel_amount = Z->size[0];
+
+    //double
+    
+    
+    int sum = 0;
+
+    //output size of Z. Output size due to Conv.
+    int size_output = size_input - size_kernel + 1; //(size_input + 2*padding - size_kernel)/stride + 1;
+    Tensor* currW = NULL;
+    //provide the CONV.
+        //size_input ... orientation along the output. Get out of the output coordinates the input location via formula
+    //channels output. Corresponds to one kernel in W
+    for(int i = 0; i < kernel_amount; i++){
+        //height
+        currW =&W[i];
+        for(int j = 0; j < size_output; j++){
+            //width
+            for(int l = 0; l < size_output; l++){
+                
+                //go to start position of current kernel location. Start from there considering all values from kernel.
+                //for(int m = 0; m < kernel_size; m++){
+                    //for(int n = 0; m < kernel_size; n++){
+                        
+                //forming the kernel. 
+                //move inside input on location corresponding current location in output.
+                //channels
+                for(int c = 0; c < input_channels; c++){
+                   //go to start position of current kernel location. Start from there considering all values from kernel.
+                    for(int m = 0; m < size_kernel; m++){
+                        for(int n = 0; n < size_kernel; n++){ 
+                            //w*x ... compute the kernel sum(sum(sum)) for one position [j][l] on the input
+                            //due to for(c) ... compute the sum over ALL channels of the input X for given position [j][l]
+                            sum += (X->data[c][j+m][l+n])*(currW->data[c][m][n]);
+                            }
+                    }
+                }
+                //output value for kernel i on position [j][l] of the output matrix
+                //next step: new position kernel [j][l+1] ... renew the value sum. Compute new kernel.
+                Z->data[i][j][l] = sum;
+                //printf("sum: %f ", sum);
+                sum = 0;
+            }
+        }
+    }
+    //channels output
+    for(int o=0; o < Z->size[0]; o++){
+        //height of channel in Z
+        for(int p = 0; p < Z->size[1]; p++){
+            //width in channel in Z
+            for(int q=0; q < Z->size[2]; q++){
+                Z->data[o][p][q] += (b->data[0][0][o]);
+            }
+        }
+    }
+    #endif 
 }
 
 
